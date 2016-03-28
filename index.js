@@ -87,20 +87,20 @@ function clearTokenFile(){
     }
 }
 
-try {
+function loadTokenFile(){
+  try {
     tokenFile = JSON.parse(fs.readFileSync(TOKEN_FILENAME, 'utf8'));
-} catch (e) {
+  } catch (e) {
     try {
-		createTokenFile();
-		tokenFile = JSON.parse(fs.readFileSync(TOKEN_FILENAME, 'utf8'));
-	} catch (ignored) {} //Will happen on systems without file I/O access
-}
+      createTokenFile();
+      tokenFile = JSON.parse(fs.readFileSync(TOKEN_FILENAME, 'utf8'));
+    } catch (ignored) {} //Will happen on systems without file I/O access
+  }
 
-if(tokenFile.token != null){
+  if(tokenFile.token != null){
     code = tokenFile.token;
+  }
 }
-
-
 
 
 /** Setup the Express server; used to handle OAuth2 results **/
@@ -186,9 +186,15 @@ exports.init = function(cId, cSecret, options){
 
 		if(options.message !== undefined && typeof options.message == "string")
 			ALERT_TEXT = options.message;
+			
+	    	if(options.tokenFilename !== undefined && typeof options.tokenFilename == "string")
+		        TOKEN_FILENAME = options.tokenFilename;
+
 	} else {
 		console.log("Invalid init params!");	
 	} 
+	
+        loadTokenFile();
 }
 
 /**
